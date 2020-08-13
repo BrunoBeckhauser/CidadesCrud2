@@ -1,0 +1,278 @@
+﻿<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <title></title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous">
+</head>
+<body>
+
+    <div>
+        <h1>Cadastro de Cidades</h1>
+    </div>
+
+    <div class="container form-horizontal">
+        <form>
+            
+            <input type="hidden" id="id" class="form-control">
+
+            <div class="row"> 
+                <div class="form-group col-md-4">
+                     <label for="nome">Cidade</label>
+                    <input type="text" id="nome" class="form-control" placeholder="Nome">
+                </div>
+                <div class="form-group col-md-4">
+                     <label for="regiao">Região</label>
+                    <input type="text" id="regiao" class="form-control" placeholder="Região">
+                </div>
+            </div>
+            <div class="row">
+                <div class="form-group col-md-4">
+                     <label for="longitude">Longitude</label>
+                    <input type="text" id="longitude" class="form-control" placeholder="Longitude">
+                </div>
+                <div class="form-group col-md-4">
+                    <label for="latitude">Latitude</label>
+                    <input type="text" id="latitude" class="form-control" placeholder="Latitude">
+                </div>
+            </div>
+            <div class="row">
+                <div class="form-group col-md-4">
+                     <label for="codigoIbge">Código IBGE</label>
+                    <input type="text" id="codigoIbge" class="form-control" placeholder="Codigo IBGE">
+                </div>
+                <div class="form-group col-md-4">
+                     <label for="uf">Estado</label>
+                    <select id="uf" class="form-control custom-select">
+                        <option selected value="UF não definida">Selecionar estado</option>
+                        <option value="AL">AL</option>
+                        <option value="AL">AL</option>
+                        <option value="AP">AP</option>
+                        <option value="AM">AM</option>
+                        <option value="BA">BA</option>
+                        <option value="BA">BA</option>
+                        <option value="CE">CE</option>
+                        <option value="DF">DF</option>
+                        <option value="ES">ES</option>
+                        <option value="GO">GO</option>
+                        <option value="MA">MA</option>
+                        <option value="MT">MT</option>
+                        <option value="MS">MS</option>
+                        <option value="MG">MG</option>
+                        <option value="PA">PA</option>
+                        <option value="PB">PB</option>
+                        <option value="PR">PR</option>
+                        <option value="PE">PE</option>
+                        <option value="PI">PI</option>
+                        <option value="RJ">RJ</option>
+                        <option value="RN">RN</option>
+                        <option value="RS">RS</option>
+                        <option value="RO">RO</option>
+                        <option value="RR">RR</option>
+                        <option value="SC">SC</option>
+                        <option value="SP">SP</option>
+                        <option value="SE">SE</option>
+                        <option value="TO">TO</option>
+                    </select>
+                </div>
+            </div>
+            <div class="well">
+                <input type="button" class="btn btn-primary btn-lg active" role="button" aria-pressed="true" onclick="cadastrar();" value="Cadastrar">
+                <input type="button" class="btn btn-primary btn-lg active" role="button" aria-pressed="true" onclick="alterar();" value="Alterar">
+                <input type="button" class="btn btn-primary btn-lg active" role="button" aria-pressed="true" onclick="limpar();" value="Limpar">
+            </div>
+        </form>
+    
+    
+    <div class="form-group row">
+        <label for="uf">Procurar a cidade pelo nome</label>
+        <input type="text" class="form-control" id="buscaNome" size="5" />
+    </div>
+    
+    <div class="form-group row">
+        <input type="button" value="Buscar" class="btn btn-primary btn-lg active" onclick="BuscarPeloNome();" />
+    </div>
+
+    <div>
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th scope="col">Id</th>
+                    <th scope="col">Nome</th>
+                    <th scope="col">UF</th>
+                    <th scope="col">Região</th>
+                    <th scope="col">Latitude</th>
+                    <th scope="col">Longitude</th>
+                    <th scope="col">Codigo IBGE</th>
+                </tr>
+            </thead>
+            <tbody id="tabelaCidades"></tbody>
+        </table>
+    </div>
+</div>
+     <script src="https://ajax.aspnetcdn.com/ajax/jQuery/jquery-2.0.3.min.js"></script>
+     <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js" integrity="sha384-9/reFTGAW83EW2RDu2S0VKaIzap3H66lZH81PoYlFhbGU+6BZp6G7niu735Sk7lN" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js" integrity="sha384-B4gt1jrGC7Jh4AgTPSdUtOBvfO8shuf57BaghqFfPlYxofvL8/KUEfYiJOMMV+rV" crossorigin="anonymous"></script>
+
+    <script>
+        var uri = 'api/cidades';
+
+        $(document).ready(function () {
+            // Send an AJAX request
+            $.getJSON(uri)
+                .done(function (data) {
+                    // On success, 'data' contains a list of products.
+                    $.each(data, function (key, item) {
+                        // Add a list item for the product.
+                        $("#tabelaCidades").append(formatItem(item));
+                    });
+                });
+        });
+
+        function formatItem(item) {
+            var tr = '<tr><td>' + item.Id + '</td><td>' + item.Nome + '</td><td>' + item.UF + '</td><td>' + item.Regiao + '</td><td>' + item.Lat + '</td><td>' + item.Lng + '</td><td>' + item.CodigoIbge + '</td>'
+            tr += '<td><a href="#" class="btn btn-primary active" role="button" aria-pressed="true" onclick="excluir(' + item.Id + ');">Excluir</a></td>';
+            tr += '<td><a href="#" class="btn btn-primary active" role="button" aria-pressed="true" onclick=editar("' + item.Nome + '","' + item.UF + '","' + item.Regiao + '","' + item.Lat + '","' + item.Lng + '","' + item.CodigoIbge + '",' + item.Id + ');>editar</a></td></tr>';
+            return tr;
+        }
+
+        function find() {
+            var id = $('#Id').val();
+            $.getJSON(uri + '/' + id)
+                .done(function (data) {
+                    //$(table).find('tbody').append("<tr><td>aaaa</td></tr>");
+                    $('#cidades').text(formatItem(data));
+                })
+                .fail(function (jqXHR, textStatus, err) {
+                    $('#cidades').text('Error: ' + err);
+                });
+        }
+        function limpar(){
+            $("#id").val("0");
+            $("#nome").val();
+            $("#regiao").val("");
+            $("#latitude").val("");
+            $("#longitude").val("");
+            $("#codigoIbge").val("");
+        }
+
+
+        function cadastrar() {
+            
+            //string nome, string uf, string regiao, string lat, string lng
+            var nome = $("#nome").val();
+            var uf = $("#uf").val();
+            var regiao = $("#regiao").val();
+            var lat = $("#latitude").val();
+            var lng = $("#longitude").val();
+            var codigoIbge = $("#codigoIbge").val();
+
+            var validar = true
+            $.ajax({
+                method: "POST",
+                async: false,
+                url: uri + '/ValidarCadastroIgual?nome=' + nome + '&uf=' + uf + "&id=0",
+                
+            }).done(function (data) {
+                debugger;
+                validar = data;
+            });
+
+            debugger;
+            if (validar == false) {
+                alert("Já existe uma cidade com este nome e uf");
+                return;
+            }
+            debugger;
+            $.ajax({
+                method: "POST",
+                async: false,
+                url: uri + '/Cadastrar?nome=' + nome + '&uf=' + uf + '&regiao=' + regiao + '&lat=' + lat + '&lng=' + lng + '&codigoIbge=' + codigoIbge,
+            });
+
+
+            limpar();
+        }
+
+        function alterar() {
+            var nome = $("#nome").val();
+            var uf = $("#uf").val();
+            var regiao = $("#regiao").val();
+            var lat = $("#latitude").val();
+            var lng = $("#longitude").val();
+            var codigoIbge = $("#codigoIbge").val();
+            var id = $("#id").val();
+            debugger;
+
+            if(id == 0){
+                alert("Selecione um registro para alterar");
+                return;
+            }
+            var validar = true
+            $.ajax({
+                method: "POST",
+                async: false,
+                url: uri + '/ValidarCadastroIgual?nome=' + nome + '&uf=' + uf + '&id=' + id,
+                
+            }).done(function (data) {
+                validar = data;
+            });
+            debugger;
+            if (validar == false) {
+                alert("Já existe uma cidade com este nome e uf");
+                return;
+            }
+
+            //string nome, string uf, string regiao, string lat, string lng
+
+
+            $.ajax({
+                method: "POST",
+                async:false,
+                url: uri + '/Alterar?nome=' + nome + '&uf=' + uf + '&regiao=' + regiao + '&lat=' + lat + '&lng= ' + lng + '&codigoIbge=' + codigoIbge + '&id=' + id,
+            });
+
+            limpar();
+        }
+
+        function editar(nome,uf,regiao,lat,lng,codigo,id){
+
+            $("#id").val(id);
+            $("#nome").val(nome);
+            $("#regiao").val(regiao);
+            $("#latitude").val(lat);
+            $("#longitude").val(lng);
+            $("#codigoIbge").val(codigo);
+            $("#uf").val(uf);
+        }
+
+        function excluir(id) {
+
+            $.ajax({
+                method: "POST",
+                url: uri + '/ExcluirCadastro?id=' + id,
+                data: { nome: "Lucas" }
+            });
+        }
+
+        function BuscarPeloNome() {
+            //string nome, string uf, string regiao, string lat, string lng
+            var nome = $("#buscaNome").val();
+            $("#tabelaCidades").empty();
+            $.getJSON(uri + '/ObterCidadePeloNome?nome=' + nome)
+                .done(function (data) {
+                    $.each(data, function (key, item) {
+                        // Add a list item for the product.
+                        $("#tabelaCidades").append(formatItem(item));
+                    });
+                })
+                .fail(function (jqXHR, textStatus, err) {
+                    $('#tabelaCidades').text('Error: ' + err);
+                });
+        }
+
+        
+
+    </script>
+ </body>
+</html>
